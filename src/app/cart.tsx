@@ -10,6 +10,7 @@ import { useCart } from '@/state/CartContext';
 import type { ResolvedLine } from '@/state/cartReducer';
 import { font, radius, spacing, useColors } from '@/theme';
 
+/** Cart screen: edit quantities, remove items, see the subtotal and continue to checkout. */
 export default function CartScreen() {
   const colors = useColors();
   const router = useRouter();
@@ -17,6 +18,7 @@ export default function CartScreen() {
   const { state, lines, totals, dispatch } = useCart();
   const branch = findBranch(state.branchId);
 
+  /** Removes every line the current branch cannot prepare. */
   const removeUnavailable = () => {
     for (const line of lines) if (!line.available) dispatch({ type: 'remove', key: line.key });
   };
@@ -83,6 +85,7 @@ export default function CartScreen() {
   );
 }
 
+/** A single cart line with its options, price, quantity stepper and remove button. */
 function CartRow({
   line,
   onQuantity,

@@ -25,11 +25,13 @@ interface CartContextValue {
 
 const CartContext = createContext<CartContextValue | null>(null);
 
+/** Guards against corrupted or outdated data read from storage. */
 function isCartState(value: unknown): value is CartState {
   const v = value as CartState;
   return Boolean(v) && Array.isArray(v.lines) && typeof v.customerName === 'string';
 }
 
+/** Holds cart state in a reducer and saves it to AsyncStorage on every change. */
 export function CartProvider({ children }: { children: ReactNode }) {
   const [state, dispatch] = useReducer(cartReducer, initialCartState);
   const [hydrated, setHydrated] = useState(false);
@@ -60,6 +62,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
   return <CartContext value={value}>{children}</CartContext>;
 }
 
+/** Access the cart from any screen or component. */
 export function useCart(): CartContextValue {
   const context = use(CartContext);
   if (!context) throw new Error('useCart must be used inside <CartProvider>');

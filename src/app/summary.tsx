@@ -10,6 +10,7 @@ import { buildOrderMessage, whatsappUrl } from '@/lib/whatsapp';
 import { useCart } from '@/state/CartContext';
 import { font, radius, spacing, useColors } from '@/theme';
 
+/** Order summary: customer name and notes, order review, and sending via WhatsApp. */
 export default function OrderSummaryScreen() {
   const colors = useColors();
   const router = useRouter();
@@ -40,11 +41,13 @@ export default function OrderSummaryScreen() {
     currency: catalog.currency,
   });
 
+  /** Copies the order text so it can be pasted into WhatsApp manually. */
   const copyOrder = async () => {
     await Clipboard.setStringAsync(message);
     Alert.alert('Order copied', `Paste it into a WhatsApp chat with ${branch.name} (+${branch.whatsapp}).`);
   };
 
+  /** After WhatsApp opens, offers to clear the cart for a new order. */
   const askToClear = () =>
     Alert.alert('Order sent?', 'Once you have sent the message in WhatsApp, you can start a new order.', [
       { text: 'Keep cart', style: 'cancel' },
@@ -57,6 +60,7 @@ export default function OrderSummaryScreen() {
       },
     ]);
 
+  /** Validates the name, then opens WhatsApp with the order pre-filled. */
   const sendOrder = async () => {
     setTriedSubmit(true);
     if (nameMissing) return;

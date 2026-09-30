@@ -1,60 +1,58 @@
-# Sushi Order — CSE 310 Mobile App Module
+# Overview
 
-A mobile ordering app for a sushi restaurant, built with **React Native + Expo (SDK 57) + TypeScript** for Android and iOS.
-Customers browse a menu shared across branches, customize items with options, build a cart, and send the order to the
-nearest branch as a **pre-filled WhatsApp message**. WhatsApp is the restaurant's real ordering channel, so orders are
-never stored on a server and there are no accounts.
+As a software engineer I want to learn how to build a real cross-platform mobile app: several connected screens,
+state that survives restarts, and native device features. I chose a problem I actually have, which is ordering
+for a sushi restaurant whose real ordering channel is WhatsApp.
 
-> The catalog in this repo (`src/data/catalog.json`) is **sample data**: made-up branches, prices and WhatsApp numbers.
+**Sushi Order** is a React Native + Expo app written in TypeScript that runs on Android and iOS. Customers:
 
-## How the module requirements are met
+1. Get the **nearest branch selected automatically** using the phone's location, or pick one from a list if
+   location permission is denied.
+2. **Browse the menu**, which only shows the products that branch carries.
+3. **Customize items** with single-choice options (size, protein, heat level) and multi-choice extras with a limit,
+   each with its own price change, and choose a quantity.
+4. **Manage a cart**: change quantities, remove items, and see the subtotal. The cart is saved on the device, so it
+   is still there after the app is closed. If you switch to a branch that doesn't carry some items, the app lists
+   them and asks before removing them.
+5. **Send the order** to the branch as a pre-filled WhatsApp message (items, options, total, name and notes). A
+   "Copy order text" button is a fallback when WhatsApp can't be opened.
 
-| Requirement | Where |
-| --- | --- |
-| Multiple screens with navigation | Expo Router (built on React Navigation's native stack): Menu, Product Detail, Cart, Order Summary, plus a Branch Picker modal (`src/app/`) |
-| User interaction | Option selectors (radio / checkbox with max), quantity steppers, name + notes fields (`src/components/`, `src/app/summary.tsx`) |
-| Structured local data | JSON catalog with branches, categories, products, option groups and per-branch availability, typed in `src/types/catalog.ts` |
-| On-device storage | Cart, branch, name and notes persist across restarts with AsyncStorage (`src/state/CartContext.tsx`) |
-| Device features | Location permission + haversine distance to auto-pick the nearest branch (`src/state/LocationContext.tsx`, `src/lib/distance.ts`); deep link into WhatsApp (`src/lib/whatsapp.ts`); clipboard fallback |
-| State management | Cart state via React Context + `useReducer` (`src/state/cartReducer.ts`) |
-| Unit tests | Totals, reducer, pricing, distance and message building (`src/**/__tests__/`) |
+Orders are not stored on a server and there are no accounts. The catalog in this repository
+(`src/data/catalog.json`) is sample data: made-up branches, prices and WhatsApp numbers.
 
-## Features
+My purpose was to learn how navigation, state management with `useReducer` + Context, on-device storage, location
+permissions and deep linking work in React Native, and how they behave differently on Android and iOS.
 
-- **Nearest branch**: on first launch the app asks for location and selects the closest branch. If permission is denied,
-  the menu prompts you to pick one manually (with a shortcut to Settings).
-- **Per-branch menu**: only products the selected branch carries are shown.
-- **Product options**: single-choice groups (size, protein…) and multi-choice groups with a limit (extras, toppings),
-  each with its own price change. The Add button shows the live total.
-- **Cart**: identical items merge; quantities and removal; subtotal.
-- **Branch switching**: if the new branch doesn't carry some cart items, the app lists them and asks before removing them.
-  Items that become unavailable any other way are flagged in the cart and left out of the total and the message.
-- **WhatsApp order**: builds a formatted message (items, options, total, name, notes) and opens `wa.me/<branch>` with it
-  pre-filled. **Copy order text** is always available in case WhatsApp can't be opened.
-- Light and dark mode.
+[Software Demo Video](http://youtube.link.goes.here)
 
-## Running it
+# Development Environment
 
-Requirements: Node 20+, and the **Expo Go** app on your phone (or an iOS Simulator / Android emulator).
+- **Tools:** Claude Code (AI coding assistant), Git and GitHub
+- **Language:** TypeScript
+- **Framework:** React Native 0.86 with Expo SDK 57
+- **Testing on devices:** Expo Go on a physical phone, and the iOS Simulator
+- **Libraries:**
+  - `expo-router`: file-based navigation built on React Navigation's native stack
+  - `@react-native-async-storage/async-storage`: saves the cart on the device
+  - `expo-location`: location permission and current position
+  - `expo-clipboard`: "Copy order text" fallback
+  - `react-native-safe-area-context`: layout around notches and home indicators
+  - Jest (`jest-expo` preset) for unit tests, ESLint and Prettier for code quality
+
+## Running the app
 
 ```bash
 npm install
 npx expo start        # scan the QR code with Expo Go (Android) or the Camera app (iOS)
+npm test              # unit tests
+npm run typecheck     # TypeScript check
+npm run lint          # ESLint
 ```
 
-- WhatsApp isn't available on simulators: there the link opens the wa.me web page. Test the send flow on a real phone.
-- To test location on the iOS Simulator: `xcrun simctl location booted set 40.2338,-111.6585` (near the Provo branch).
+WhatsApp isn't available on simulators; there the order link opens the wa.me web page. To fake a location on the iOS
+Simulator: `xcrun simctl location booted set 40.2338,-111.6585` (near the Provo branch).
 
-### Scripts
-
-```bash
-npm test              # unit tests (Jest, jest-expo preset)
-npm run typecheck     # tsc --noEmit
-npm run lint          # expo lint
-npm run format        # prettier
-```
-
-## Project structure
+## How the code is organized
 
 ```
 src/
@@ -66,27 +64,36 @@ src/
     summary.tsx         # Order summary + WhatsApp
     branch.tsx          # Branch picker (modal)
   components/           # Button, QuantityStepper, OptionGroupPicker, BranchBar, CartBar
-  data/catalog.json     # sample catalog
-  lib/                  # pure logic: catalog lookups, pricing, distance, WhatsApp message
+  data/catalog.json     # sample catalog: branches, categories, products, options, availability
+  lib/                  # pure logic: catalog lookups, pricing, distance (haversine), WhatsApp message
   state/                # cartReducer (pure), CartContext (AsyncStorage), LocationContext
-  types/catalog.ts
-  theme.ts              # color, spacing, radius, type tokens
+  types/catalog.ts      # TypeScript types for the catalog
+  theme.ts              # colors (light/dark), spacing, radius, font sizes
 ```
 
-Money is stored as **integer cents** everywhere to avoid floating-point rounding. Cart lines store only product ids and
-selected option ids; names and prices are looked up from the catalog, so a catalog update is picked up by saved carts.
+Money is stored as integer cents to avoid floating-point rounding. Cart lines store only product and option ids;
+names and prices are looked up from the catalog when the cart is displayed.
 
-## Out of scope (this sprint)
+# Useful Websites
 
-- Admin panel for editing the menu
+- [Expo SDK 57 documentation](https://docs.expo.dev/versions/v57.0.0/)
+- [Expo Router introduction](https://docs.expo.dev/router/introduction/)
+- [React Navigation documentation](https://reactnavigation.org/docs/getting-started)
+- [Expo Location API](https://docs.expo.dev/versions/v57.0.0/sdk/location/)
+- [AsyncStorage documentation](https://react-native-async-storage.github.io/async-storage/)
+- [React `useReducer` reference](https://react.dev/reference/react/useReducer)
+- [TypeScript handbook](https://www.typescriptlang.org/docs/)
+- [Jest getting started](https://jestjs.io/docs/getting-started)
+- [Haversine formula (Wikipedia)](https://en.wikipedia.org/wiki/Haversine_formula)
+
+# Future Work
+
+Out of scope for this version, kept here so they don't creep into the current build:
+
+- Admin panel for editing the menu and availability
 - Delivery-cost calculation
 - Payments
 - User accounts
-
-## Later list
-
-Ideas that came up during the sprint go here instead of into the code:
-
 - Product photos instead of emoji
-- Opening-hours check (warn when the branch is closed)
-- Remote catalog loaded from the admin panel
+- Opening-hours check that warns when a branch is closed
+- Load the catalog from a server instead of a bundled JSON file

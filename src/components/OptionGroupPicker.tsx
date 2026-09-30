@@ -11,12 +11,14 @@ interface OptionGroupPickerProps {
   currency: string;
 }
 
+/** Radio list (single) or checkbox list (multiple, up to max) for one option group. */
 export function OptionGroupPicker({ group, selected, onChange, currency }: OptionGroupPickerProps) {
   const colors = useColors();
   const isSingle = group.type === 'single';
   const max = group.max ?? group.choices.length;
   const atMax = !isSingle && selected.length >= max;
 
+  /** Applies a tap: replaces the choice for single groups, toggles it for multiple groups. */
   const toggle = (choiceId: string) => {
     if (isSingle) return onChange([choiceId]);
     if (selected.includes(choiceId)) return onChange(selected.filter((id) => id !== choiceId));

@@ -6,6 +6,7 @@ export interface Coordinates {
 }
 
 const EARTH_RADIUS_KM = 6371;
+/** Converts degrees to radians for the trigonometry below. */
 const toRadians = (degrees: number) => (degrees * Math.PI) / 180;
 
 /** Great-circle distance in kilometers (haversine formula). */
@@ -18,6 +19,7 @@ export function distanceKm(a: Coordinates, b: Coordinates): number {
   return 2 * EARTH_RADIUS_KM * Math.asin(Math.sqrt(h));
 }
 
+/** Returns the branch with the smallest straight-line distance from `from`. */
 export function nearestBranch(from: Coordinates, branches: Branch[]): Branch | undefined {
   let best: Branch | undefined;
   let bestDistance = Infinity;
@@ -31,6 +33,7 @@ export function nearestBranch(from: Coordinates, branches: Branch[]): Branch | u
   return best;
 }
 
+/** Shows meters under 1 km, otherwise kilometers with one decimal. */
 export function formatDistance(km: number): string {
   return km < 1 ? `${Math.round(km * 1000)} m` : `${km.toFixed(1)} km`;
 }

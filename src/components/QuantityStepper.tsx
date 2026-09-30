@@ -11,10 +11,12 @@ interface QuantityStepperProps {
   compact?: boolean;
 }
 
+/** Minus / value / plus control bounded by `min` and MAX_QUANTITY. */
 export function QuantityStepper({ value, onChange, min = 1, compact = false }: QuantityStepperProps) {
   const colors = useColors();
   const size = compact ? 32 : 44;
 
+  /** Renders one round +/- button. */
   const step = (delta: number, label: string, disabled: boolean) => (
     <Pressable
       accessibilityRole="button"

@@ -16,6 +16,7 @@ interface LocationContextValue {
 
 const LocationContext = createContext<LocationContextValue | null>(null);
 
+/** Reads the device position, preferring a recent cached fix for speed. */
 async function readPosition(): Promise<Coordinates> {
   // A recent cached fix is instant; fall back to a fresh reading.
   const last = await Location.getLastKnownPositionAsync({ maxAge: 5 * 60_000 });
@@ -23,6 +24,7 @@ async function readPosition(): Promise<Coordinates> {
   return { latitude: position.coords.latitude, longitude: position.coords.longitude };
 }
 
+/** Tracks location permission/coordinates and auto-selects the nearest branch on first launch. */
 export function LocationProvider({ children }: { children: ReactNode }) {
   const { state, dispatch, hydrated } = useCart();
   const [status, setStatus] = useState<LocationStatus>('idle');
@@ -59,6 +61,7 @@ export function LocationProvider({ children }: { children: ReactNode }) {
   return <LocationContext value={value}>{children}</LocationContext>;
 }
 
+/** Access location status and the locate action from any component. */
 export function useLocation(): LocationContextValue {
   const context = use(LocationContext);
   if (!context) throw new Error('useLocation must be used inside <LocationProvider>');

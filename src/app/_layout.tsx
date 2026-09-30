@@ -6,6 +6,7 @@ import { CartProvider } from '@/state/CartContext';
 import { LocationProvider } from '@/state/LocationContext';
 import { useColors } from '@/theme';
 
+/** Root layout: theme, global state providers and the stack navigator for all screens. */
 export default function RootLayout() {
   const scheme = useColorScheme();
   const colors = useColors();

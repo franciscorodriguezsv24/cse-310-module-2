@@ -12,6 +12,7 @@ import { useCart } from '@/state/CartContext';
 import { font, radius, spacing, useColors } from '@/theme';
 import type { Product, Selections } from '@/types/catalog';
 
+/** Product detail route: looks up the product from the URL id. */
 export default function ProductDetailScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const product = findProduct(id);
@@ -28,6 +29,7 @@ export default function ProductDetailScreen() {
   return <ProductForm key={product.id} product={product} />;
 }
 
+/** Option selection, quantity and live price for one product. */
 function ProductForm({ product }: { product: Product }) {
   const colors = useColors();
   const router = useRouter();
@@ -40,6 +42,7 @@ function ProductForm({ product }: { product: Product }) {
   const available = isAvailableAt(product, state.branchId);
   const total = lineTotal(product, selections, quantity);
 
+  /** Adds the configured item to the cart and returns to the menu. */
   const addToCart = () => {
     dispatch({ type: 'add', productId: product.id, selections, quantity });
     router.back();

@@ -44,8 +44,10 @@ export function lineKey(productId: string, selections: Selections): string {
   return [productId, ...parts].join('|');
 }
 
+/** Keeps quantities whole numbers between 0 and MAX_QUANTITY. */
 const clampQuantity = (q: number) => Math.min(MAX_QUANTITY, Math.max(0, Math.floor(q)));
 
+/** Pure reducer: returns the next cart state for each action without side effects. */
 export function cartReducer(state: CartState, action: CartAction): CartState {
   switch (action.type) {
     case 'hydrate':

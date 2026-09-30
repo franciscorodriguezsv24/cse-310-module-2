@@ -43,6 +43,7 @@ export const font = {
   caption: { fontSize: 13, fontWeight: '400' },
 } as const;
 
+/** Returns the light or dark palette matching the device setting. */
 export function useColors(): Colors {
   return useColorScheme() === 'dark' ? dark : light;
 }

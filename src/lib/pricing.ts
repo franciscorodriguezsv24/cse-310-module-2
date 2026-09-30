@@ -12,10 +12,12 @@ export function unitPrice(product: Product, selections: Selections): Cents {
   return Math.max(0, total);
 }
 
+/** Unit price times quantity. */
 export function lineTotal(product: Product, selections: Selections, quantity: number): Cents {
   return unitPrice(product, selections) * quantity;
 }
 
+/** Formats integer cents as a currency string, e.g. 1325 -> "$13.25". */
 export function formatMoney(cents: Cents, currency = 'USD'): string {
   const symbol = currency === 'USD' ? '$' : `${currency} `;
   const sign = cents < 0 ? '-' : '';

@@ -10,6 +10,7 @@ import { useCart } from '@/state/CartContext';
 import { font, radius, spacing, useColors } from '@/theme';
 import type { Product } from '@/types/catalog';
 
+/** Menu screen: branch selector plus the branch's products grouped by category. */
 export default function MenuScreen() {
   const colors = useColors();
   const router = useRouter();
@@ -58,6 +59,7 @@ export default function MenuScreen() {
   );
 }
 
+/** One tappable menu card; opens the product detail screen. */
 function ProductRow({ product }: { product: Product }) {
   const colors = useColors();
   const router = useRouter();

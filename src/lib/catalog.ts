@@ -3,14 +3,17 @@ import type { Catalog, Category, Product, Selections } from '@/types/catalog';
 
 export const catalog = rawCatalog as Catalog;
 
+/** Looks up a product by id. */
 export function findProduct(id: string, source: Catalog = catalog): Product | undefined {
   return source.products.find((p) => p.id === id);
 }
 
+/** Looks up a branch by id; returns undefined when no branch is selected. */
 export function findBranch(id: string | null, source: Catalog = catalog) {
   return id ? source.branches.find((b) => b.id === id) : undefined;
 }
 
+/** True when the given branch sells the product. */
 export function isAvailableAt(product: Product, branchId: string | null): boolean {
   return branchId !== null && product.availableAt.includes(branchId);
 }

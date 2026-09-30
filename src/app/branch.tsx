@@ -10,6 +10,7 @@ import { useLocation } from '@/state/LocationContext';
 import { font, radius, spacing, useColors } from '@/theme';
 import type { Branch } from '@/types/catalog';
 
+/** Branch picker modal: choose a branch manually or by current location. */
 export default function BranchPickerScreen() {
   const colors = useColors();
   const router = useRouter();
@@ -20,6 +21,7 @@ export default function BranchPickerScreen() {
     ? [...catalog.branches].sort((a, b) => distanceKm(coords, a) - distanceKm(coords, b))
     : catalog.branches;
 
+  /** Selects a branch, confirming first if some cart items are not sold there. */
   const choose = (branch: Branch) => {
     const removeKeys = unavailableKeysFor(state, branch.id);
     const confirm = () => {

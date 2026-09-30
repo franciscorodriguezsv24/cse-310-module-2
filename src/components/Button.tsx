@@ -9,6 +9,7 @@ interface ButtonProps extends Omit<PressableProps, 'children' | 'style'> {
   variant?: Variant;
 }
 
+/** Full-width themed button with primary, secondary and WhatsApp styles. */
 export function Button({ title, variant = 'primary', disabled, ...rest }: ButtonProps) {
   const colors = useColors();
   const background = {
