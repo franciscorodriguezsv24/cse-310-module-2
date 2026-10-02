@@ -23,7 +23,7 @@ Orders are not stored on a server and there are no accounts. The catalog in this
 My purpose was to learn how navigation, state management with `useReducer` + Context, on-device storage, location
 permissions and deep linking work in React Native, and how they behave differently on Android and iOS.
 
-[Software Demo Video](http://youtube.link.goes.here)
+[Software Demo Video](https://www.loom.com/share/0b62006df41241bd90d7ca9e79aca25a)
 
 # Development Environment
 
